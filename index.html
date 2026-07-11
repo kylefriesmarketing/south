@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>SOUTH — an endurance</title>
+<meta name="description" content="Antarctica, 1915. The ship is dying and twenty-seven men are watching your face. A branching survival epic about the greatest rescue ever led — where the only true ending is all of them.">
+<meta name="theme-color" content="#04060c">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="THE SHELF">
+<meta property="og:title" content="SOUTH — an endurance">
+<meta property="og:description" content="You are Shackleton. The ship is crushed, the ice is drifting, and twenty-seven men are watching your face to learn whether they live. The only true ending is all of them.">
+<meta property="og:url" content="https://kylefriesmarketing.github.io/south/">
+<meta property="og:image" content="https://kylefriesmarketing.github.io/south/assets/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="SOUTH — an endurance">
+<meta name="twitter:description" content="You are Shackleton. Twenty-seven men are watching your face. The only true ending is all of them.">
+<meta name="twitter:image" content="https://kylefriesmarketing.github.io/south/assets/og.jpg">
+<link rel="stylesheet" href="css/style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 4 L16 28 M8 10 L24 10 M10 18 L22 18' stroke='%23e0a84a' stroke-width='2.5' fill='none'/%3E%3C/svg%3E">
+</head>
+<body>
+<div id="app">
+
+  <div id="title-screen" class="screen">
+    <div id="title-art"></div>
+    <div class="title-inner">
+      <div class="title-eyebrow">antarctica · 1914–1916 · twenty-eight souls</div>
+      <h1 class="game-title">SOUTH</h1>
+      <div class="title-sub">an endurance</div>
+      <div id="title-residue" class="title-residue"></div>
+      <div class="title-menu">
+        <button id="btn-begin" class="menu-btn">Take Command</button>
+        <button id="btn-continue" class="menu-btn hidden">Resume Command</button>
+        <button id="btn-crew" class="menu-btn small">All Hands</button>
+        <button id="btn-outcomes" class="menu-btn small">How the Ice Wrote It</button>
+      </div>
+      <div class="shelf-line">part of <a class="shelf-link" href="https://kylefriesmarketing.github.io/games/" target="_blank" rel="noopener">THE SHELF</a></div>
+      <div class="title-foot">after the 1914–16 Imperial Trans-Antarctic Expedition &middot; press <kbd>~</kbd> for the lantern &middot; <kbd>m</kbd> mutes</div>
+    </div>
+  </div>
+
+  <div id="gallery" class="screen overlay hidden">
+    <div class="gallery-box">
+      <h2 id="gallery-title"></h2>
+      <div id="gallery-body"></div>
+      <button id="gallery-close" class="menu-btn small">Return</button>
+    </div>
+  </div>
+
+  <div id="game-screen" class="screen hidden">
+    <div id="scene-wrap"><div id="scene-art"></div></div>
+    <div id="clock-rail" title="the expedition"></div>
+    <div id="hud"></div>
+    <div id="story-layer">
+      <div id="text-panel">
+        <div id="region-name"></div>
+        <div id="node-title"></div>
+        <div id="node-text"></div>
+        <div id="choices"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="ending-screen" class="screen hidden">
+    <div id="ending-art"></div>
+    <div class="ending-inner">
+      <div id="ending-kind"></div>
+      <h2 id="ending-title"></h2>
+      <div id="ending-text"></div>
+      <div id="ending-men"></div>
+      <button id="btn-again" class="menu-btn">Return to the Ice</button>
+    </div>
+  </div>
+
+  <div id="debug-panel" class="hidden"></div>
+  <div id="grain" aria-hidden="true"></div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/images.js"></script>
+<script src="js/art.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/engine.js"></script>
+</body>
+</html>
