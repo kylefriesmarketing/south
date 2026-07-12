@@ -171,6 +171,15 @@ $('btn-again').onclick=titleScreen;
 
 /* ---------------- debug (~) & mute (m) ---------------- */
 document.addEventListener('keydown',e=>{
+  const inField=e.target&&e.target.matches&&e.target.matches('input,select,textarea');
+  if(!inField){
+    if(!$('game-screen').classList.contains('hidden') && /^[1-9]$/.test(e.key)){
+      const b=[...document.querySelectorAll('#choices .choice')][+e.key-1];
+      if(b){ b.focus(); b.click(); return; }
+    } else if(!$('ending-screen').classList.contains('hidden') && e.key==='Enter'){
+      return $('btn-again').click();
+    }
+  }
   if(e.key==='`'||e.key==='~'){
     const d=$('debug-panel'); d.classList.toggle('hidden');
     if(d.classList.contains('hidden')) return;

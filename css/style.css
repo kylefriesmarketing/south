@@ -187,3 +187,6 @@ kbd{font-family:var(--sans);font-size:.85em;background:#101724;border:1px solid 
   .vital.low .v-segs i.on{animation:none;opacity:.75}
   .choice,.menu-btn{transition:none}
 }
+
+/* accessibility: focus */
+:focus-visible{outline:2px solid var(--amber);outline-offset:2px;border-radius:4px}
