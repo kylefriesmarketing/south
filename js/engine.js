@@ -29,6 +29,52 @@ const fmt=t=>String(typeof t==='function'?t(S,P):t);
 function show(id){ ['title-screen','game-screen','ending-screen','gallery']
   .forEach(s=>$(s).classList.toggle('hidden', s!==id)); }
 
+/* ---------------- living weather ---------------- */
+const W_SNOW=new Set(['beset','crush','floecamp','march','georgia']);
+const W_SPRAY=new Set(['boats','caird','elephant']);
+let weatherKind=null;
+function paintWeather(region){
+  const kind=W_SNOW.has(region)?'snow':W_SPRAY.has(region)?'spray':null;
+  if(kind===weatherKind) return;
+  weatherKind=kind;
+  const w=$('weather'); w.innerHTML=''; w.className=kind?('w-'+kind):'';
+  if(!kind) return;
+  const n=kind==='spray'?16:34;
+  for(let i=0;i<n;i++){
+    const p=document.createElement('i');
+    p.style.left=(Math.random()*100)+'%';
+    p.style.animationDelay=(-Math.random()*9)+'s';
+    p.style.animationDuration=((kind==='spray'?4:6)+Math.random()*7)+'s';
+    p.style.opacity=(.25+Math.random()*.55).toFixed(2);
+    w.appendChild(p);
+  }
+}
+
+/* ---------------- juice: deltas, danger, chapter stamps ---------------- */
+let pendingDeltas=[], lastCh=1;
+function juice(reg){
+  if(pendingDeltas.length){
+    const host=$('hud');
+    pendingDeltas.forEach((d,i)=>{
+      const el=document.createElement('div');
+      el.className='delta-float '+(d.v>0?'gain':'loss');
+      el.textContent=(d.v>0?'+':'')+d.v+' '+d.k;
+      el.style.animationDelay=(i*140)+'ms';
+      host.appendChild(el);
+      setTimeout(()=>el.remove(), 2200+i*140);
+    });
+    pendingDeltas=[];
+  }
+  const minv=Math.min.apply(null, VITALS.map(k=>S.v[k]));
+  $('danger-vignette').className = minv<=0?'d3':minv===1?'d2':minv===2?'d1':'';
+  if(reg.ch!==lastCh){
+    lastCh=reg.ch;
+    const st=$('day-stamp');
+    st.textContent=STORY.CHAPTERS[reg.ch-1].toUpperCase();
+    st.classList.remove('show'); void st.offsetWidth; st.classList.add('show');
+  }
+}
+
 /* ---------------- scene painter: image first, SVG fallback ------------ */
 function paintScene(el, key, seed){
   if (typeof IMAGES!=='undefined' && IMAGES.has(key)){
@@ -58,9 +104,11 @@ function titleScreen(){
        : (P.lastTitle?`Last expedition: “${P.lastTitle}.” The best you have brought home: ${P.best} of 27.`:''))
     : '';
 }
-$('btn-begin').onclick=()=>{ S=newRun(); show('game-screen'); render(S.node); };
+$('btn-begin').onclick=()=>{ S=newRun(); lastCh=1; weatherKind=null; pendingDeltas=[];
+  show('game-screen'); render(S.node); };
 $('btn-continue').onclick=()=>{ const r=loadRun(); if(!r) return titleScreen();
-  S=r; show('game-screen'); render(S.node); };
+  S=r; lastCh=REGIONS[NODES[r.node].region].ch; weatherKind=null; pendingDeltas=[];
+  show('game-screen'); render(S.node); };
 
 /* ---------------- galleries ---------------- */
 $('gallery-close').onclick=titleScreen;
@@ -120,11 +168,12 @@ function render(nodeId){
   S.node=nodeId;
   const reg=REGIONS[n.region];
   paintScene($('scene-art'), n.region, nodeId+P.runs);
+  paintWeather(n.region);
   AUDIO.setScene(n.region, reg.ch, S.v.hope);
-  paintRail(); paintHUD();
+  paintRail(); paintHUD(); juice(reg);
   $('region-name').textContent=reg.name;
   $('node-title').textContent=fmt(n.title);
-  $('node-text').innerHTML=fmt(n.text);
+  $('node-text').innerHTML=fmt(n.text).split('\n\n').map((p,i)=>`<p class="unfurl" style="animation-delay:${Math.min(i*170,900)}ms">${p}</p>`).join('');
   const box=$('choices'); box.innerHTML='';
   n.choices.forEach(c=>{
     if(c.req && !c.req(S,P)) return;
@@ -138,10 +187,14 @@ function render(nodeId){
 }
 
 function choose(c){
+  const beforeV={}; VITALS.forEach(k=>beforeV[k]=S.v[k]);
+  const beforeMen=S.men;
   VITALS.forEach(k=>{ if(c[k]!==undefined) S.v[k]=clamp(S.v[k]+c[k],0,6); });
   if(c.men) S.men=clamp(S.men+c.men,0,27);
   if(c.month) S.months+=c.month;
   if(c.fx) c.fx(S,P);
+  VITALS.forEach(k=>{ const d=S.v[k]-beforeV[k]; if(d) pendingDeltas.push({k,v:d}); });
+  if(S.men!==beforeMen) pendingDeltas.push({k:S.men<beforeMen?'man lost':'men', v:S.men-beforeMen});
   const endId=typeof c.end==='function'?c.end(S,P):c.end;
   if(endId) return ending(endId);
   for(const k of VITALS) if(S.v[k]<=0) return ending(DEATHS[k]);
